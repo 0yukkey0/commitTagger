@@ -43,6 +43,11 @@ export async function fetchAllTags(owner: string, repo: string): Promise<TagMap>
     const response = await fetch(url, { headers });
 
     if (!response.ok) {
+      if (response.status === 404) {
+        // Private repo without auth, or repo not found — return empty
+        console.warn('[CommitTagger] Repo not accessible via API (404). Set a PAT for private repos.');
+        return tagMap;
+      }
       if (response.status === 403 || response.status === 429) {
         console.warn('[CommitTagger] Rate limited by GitHub API');
       }
