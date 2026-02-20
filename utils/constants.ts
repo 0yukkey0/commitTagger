@@ -24,3 +24,6 @@ export const CACHE_KEY_PREFIX = 'tag_cache_';
 
 /** Debounce delay for MutationObserver (ms) */
 export const MUTATION_DEBOUNCE_MS = 300;
+
+/** Timeout for page-context tag fetch via MAIN world (ms) */
+export const PAGE_FETCH_TIMEOUT_MS = 8000;

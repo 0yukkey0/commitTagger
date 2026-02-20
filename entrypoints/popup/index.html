@@ -11,10 +11,11 @@
       <h1>CommitTagger</h1>
 
       <section>
-        <h2>GitHub Token</h2>
+        <h2>GitHub Token (Optional)</h2>
         <p class="hint">
-          A Personal Access Token increases the rate limit from 60 to 5,000 requests/hour.
-          No scopes are required for public repos.
+          CommitTagger works without a token for logged-in GitHub users by fetching tag data
+          directly from the page context. A PAT is only needed as a fallback (increases rate
+          limit from 60 to 5,000 requests/hour). No scopes required for public repos.
         </p>
         <div class="input-group">
           <input
