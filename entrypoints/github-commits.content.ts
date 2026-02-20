@@ -1,9 +1,11 @@
 import { sendMessage } from '~/utils/messaging';
+import type { TagMap } from '~/utils/messaging';
 import {
   TAGGED_CLASS,
   BADGE_CONTAINER_CLASS,
   COMMIT_LINK_SELECTOR,
   MUTATION_DEBOUNCE_MS,
+  PAGE_FETCH_TIMEOUT_MS,
 } from '~/utils/constants';
 import './github-commits.content/style.css';
 
@@ -45,6 +47,23 @@ function extractCommitShas(): Map<string, HTMLElement> {
   return shaMap;
 }
 
+/** Filter a full tag map by requested SHAs, supporting short SHA prefix matching */
+function filterByShas(tagMap: TagMap, shas: string[]): TagMap {
+  const result: TagMap = {};
+  const fullShas = Object.keys(tagMap);
+  for (const sha of shas) {
+    if (tagMap[sha]) {
+      result[sha] = tagMap[sha];
+    } else if (sha.length < 40) {
+      const matched = fullShas.find((full) => full.startsWith(sha));
+      if (matched) {
+        result[sha] = tagMap[matched];
+      }
+    }
+  }
+  return result;
+}
+
 /** Inject tag badges into a commit row */
 function injectBadges(row: HTMLElement, tags: string[], owner: string, repo: string): void {
   const container = document.createElement('span');
@@ -76,6 +95,42 @@ function injectBadges(row: HTMLElement, tags: string[], owner: string, repo: str
   }
 }
 
+/**
+ * Request tag data from the MAIN world content script via postMessage.
+ * The MAIN world script fetches GitHub's /tags pages with session cookies,
+ * so no PAT is required for logged-in users.
+ */
+function fetchTagsViaPageContext(
+  owner: string,
+  repo: string,
+): Promise<TagMap | null> {
+  return new Promise((resolve) => {
+    const requestId = Math.random().toString(36).slice(2);
+
+    const timeout = setTimeout(() => {
+      window.removeEventListener('message', handler);
+      resolve(null);
+    }, PAGE_FETCH_TIMEOUT_MS);
+
+    function handler(event: MessageEvent) {
+      if (event.source !== window) return;
+      if (event.data?.type !== 'CT_TAGS_RESULT') return;
+      if (event.data.requestId !== requestId) return;
+
+      clearTimeout(timeout);
+      window.removeEventListener('message', handler);
+      resolve(event.data.success ? event.data.tagMap : null);
+    }
+
+    window.addEventListener('message', handler);
+
+    // Small delay to ensure MAIN world script is initialized
+    setTimeout(() => {
+      window.postMessage({ type: 'CT_FETCH_TAGS', owner, repo, requestId }, '*');
+    }, 100);
+  });
+}
+
 /** Main processing: extract SHAs, fetch tags, inject badges */
 async function processCommits(): Promise<void> {
   const repoInfo = getRepoInfo();
@@ -85,19 +140,33 @@ async function processCommits(): Promise<void> {
   if (shaMap.size === 0) return;
 
   const shas = Array.from(shaMap.keys());
+  const { owner, repo } = repoInfo;
 
   try {
-    const tagMap = await sendMessage('getTagsForCommits', {
-      owner: repoInfo.owner,
-      repo: repoInfo.repo,
-      shas,
-    });
+    let tagMap: TagMap | null = null;
+
+    // 1. Check cache first (instant)
+    const cached = await sendMessage('getCachedTags', { owner, repo });
+    if (cached) {
+      tagMap = filterByShas(cached, shas);
+    } else {
+      // 2. Try page-context fetch (no PAT needed, uses session cookies)
+      const pageResult = await fetchTagsViaPageContext(owner, repo);
+      if (pageResult && Object.keys(pageResult).length > 0) {
+        // Cache the full tag map for subsequent navigations
+        sendMessage('cacheTagMap', { owner, repo, tagMap: pageResult }).catch(() => {});
+        tagMap = filterByShas(pageResult, shas);
+      } else {
+        // 3. Fallback to REST API via background (with optional PAT)
+        tagMap = await sendMessage('getTagsForCommits', { owner, repo, shas });
+      }
+    }
 
     for (const [sha, row] of shaMap) {
       row.classList.add(TAGGED_CLASS);
-      const tags = tagMap[sha];
+      const tags = tagMap?.[sha];
       if (tags && tags.length > 0) {
-        injectBadges(row, tags, repoInfo.owner, repoInfo.repo);
+        injectBadges(row, tags, owner, repo);
       }
     }
   } catch (error) {
