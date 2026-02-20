@@ -10,6 +10,17 @@ interface ProtocolMap {
     shas: string[];
   }): TagMap;
 
+  getCachedTags(data: {
+    owner: string;
+    repo: string;
+  }): TagMap | null;
+
+  cacheTagMap(data: {
+    owner: string;
+    repo: string;
+    tagMap: TagMap;
+  }): void;
+
   clearRepoCache(data: { owner: string; repo: string }): void;
 }
 
