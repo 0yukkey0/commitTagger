@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CommitTagger Settings</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>CommitTagger</h1>
+
+      <section>
+        <h2>GitHub Token</h2>
+        <p class="hint">
+          A Personal Access Token increases the rate limit from 60 to 5,000 requests/hour.
+          No scopes are required for public repos.
+        </p>
+        <div class="input-group">
+          <input
+            type="password"
+            id="token-input"
+            placeholder="ghp_xxxxxxxxxxxx"
+            autocomplete="off"
+          />
+          <button id="save-token">Save</button>
+        </div>
+        <div id="token-status" class="status"></div>
+      </section>
+
+      <section>
+        <h2>Cache</h2>
+        <p class="hint">Tag data is cached for 1 hour to reduce API calls.</p>
+        <button id="clear-cache" class="secondary">Clear All Cache</button>
+        <div id="cache-status" class="status"></div>
+      </section>
+
+      <section>
+        <h2>Rate Limit</h2>
+        <div id="rate-info" class="rate-info">Loading...</div>
+      </section>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

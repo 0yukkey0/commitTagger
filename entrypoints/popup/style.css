@@ -1,0 +1,109 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 340px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: #24292f;
+  background: #ffffff;
+}
+
+.container {
+  padding: 16px;
+}
+
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+h2 {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+section {
+  margin-bottom: 16px;
+}
+
+.hint {
+  color: #656d76;
+  font-size: 12px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.input-group {
+  display: flex;
+  gap: 6px;
+}
+
+input[type='password'] {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: monospace;
+  outline: none;
+}
+
+input[type='password']:focus {
+  border-color: #0969da;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.12);
+}
+
+button {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #2da44e;
+  color: #ffffff;
+  transition: background-color 0.15s;
+}
+
+button:hover {
+  background-color: #2c974b;
+}
+
+button.secondary {
+  background-color: #f6f8fa;
+  color: #24292f;
+  border-color: #d0d7de;
+}
+
+button.secondary:hover {
+  background-color: #eaeef2;
+}
+
+.status {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #656d76;
+  min-height: 16px;
+}
+
+.status.success {
+  color: #1a7f37;
+}
+
+.rate-info {
+  font-size: 12px;
+  color: #656d76;
+  line-height: 1.5;
+}
+
+.rate-info strong {
+  color: #24292f;
+}

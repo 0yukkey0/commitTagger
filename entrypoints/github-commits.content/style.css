@@ -1,0 +1,45 @@
+.commit-tagger-badges {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+  flex-wrap: wrap;
+  vertical-align: middle;
+}
+
+.commit-tagger-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #1a7f37;
+  background-color: #dafbe1;
+  border: 1px solid rgba(31, 111, 60, 0.3);
+  border-radius: 2em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.commit-tagger-badge:hover {
+  background-color: #aceebb;
+  text-decoration: none;
+  color: #1a7f37;
+}
+
+/* Dark mode support */
+[data-color-mode='dark'] .commit-tagger-badge,
+[data-dark-theme] .commit-tagger-badge,
+html[data-color-mode='dark'] .commit-tagger-badge {
+  color: #3fb950;
+  background-color: rgba(46, 160, 67, 0.15);
+  border-color: rgba(63, 185, 80, 0.3);
+}
+
+[data-color-mode='dark'] .commit-tagger-badge:hover,
+[data-dark-theme] .commit-tagger-badge:hover,
+html[data-color-mode='dark'] .commit-tagger-badge:hover {
+  background-color: rgba(46, 160, 67, 0.3);
+  color: #3fb950;
+}

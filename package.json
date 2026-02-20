@@ -1,0 +1,23 @@
+{
+  "name": "commit-tagger",
+  "description": "Display tags on GitHub commit list pages",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "wxt": "^0.20.17"
+  },
+  "dependencies": {
+    "@webext-core/messaging": "^1.4.0"
+  }
+}
