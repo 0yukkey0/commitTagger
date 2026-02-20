@@ -1,4 +1,4 @@
-import { GITHUB_API_BASE, TAGS_PER_PAGE, TOKEN_STORAGE_KEY } from './constants';
+import { GITHUB_API_BASE, TAGS_PER_PAGE } from './constants';
 import type { TagMap } from './messaging';
 
 interface GitHubTag {
@@ -6,12 +6,6 @@ interface GitHubTag {
   commit: {
     sha: string;
   };
-}
-
-/** Get stored GitHub PAT, or null */
-async function getToken(): Promise<string | null> {
-  const result = await chrome.storage.local.get(TOKEN_STORAGE_KEY);
-  return result[TOKEN_STORAGE_KEY] ?? null;
 }
 
 /** Parse Link header to extract the next page URL */
@@ -22,11 +16,11 @@ function getNextPageUrl(linkHeader: string | null): string | null {
 }
 
 /**
- * Fetch all tags for a repository, handling pagination.
+ * Fetch all tags for a repository via the GitHub REST API (unauthenticated).
+ * Used as a fallback when page-context fetch fails.
  * Returns a map of commit SHA → tag name[].
  */
 export async function fetchAllTags(owner: string, repo: string): Promise<TagMap> {
-  const token = await getToken();
   const tagMap: TagMap = {};
 
   let url: string | null =
@@ -36,16 +30,12 @@ export async function fetchAllTags(owner: string, repo: string): Promise<TagMap>
     const headers: Record<string, string> = {
       Accept: 'application/vnd.github.v3+json',
     };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
 
     const response = await fetch(url, { headers });
 
     if (!response.ok) {
       if (response.status === 404) {
-        // Private repo without auth, or repo not found — return empty
-        console.warn('[CommitTagger] Repo not accessible via API (404). Set a PAT for private repos.');
+        console.warn('[CommitTagger] Repo not accessible via API (404).');
         return tagMap;
       }
       if (response.status === 403 || response.status === 429) {

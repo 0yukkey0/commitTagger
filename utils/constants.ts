@@ -16,9 +16,6 @@ export const COMMIT_LINK_SELECTOR = 'a[href*="/commit/"]';
 /** GitHub API tags per page (max 100) */
 export const TAGS_PER_PAGE = 100;
 
-/** Storage key for GitHub PAT */
-export const TOKEN_STORAGE_KEY = 'github_pat';
-
 /** Prefix for cache storage keys */
 export const CACHE_KEY_PREFIX = 'tag_cache_';
 

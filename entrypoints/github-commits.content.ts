@@ -97,8 +97,7 @@ function injectBadges(row: HTMLElement, tags: string[], owner: string, repo: str
 
 /**
  * Request tag data from the MAIN world content script via postMessage.
- * The MAIN world script fetches GitHub's /tags pages with session cookies,
- * so no PAT is required for logged-in users.
+ * The MAIN world script fetches GitHub's /tags pages with session cookies.
  */
 function fetchTagsViaPageContext(
   owner: string,
@@ -150,14 +149,14 @@ async function processCommits(): Promise<void> {
     if (cached) {
       tagMap = filterByShas(cached, shas);
     } else {
-      // 2. Try page-context fetch (no PAT needed, uses session cookies)
+      // 2. Try page-context fetch (uses session cookies)
       const pageResult = await fetchTagsViaPageContext(owner, repo);
       if (pageResult && Object.keys(pageResult).length > 0) {
         // Cache the full tag map for subsequent navigations
         sendMessage('cacheTagMap', { owner, repo, tagMap: pageResult }).catch(() => {});
         tagMap = filterByShas(pageResult, shas);
       } else {
-        // 3. Fallback to REST API via background (with optional PAT)
+        // 3. Fallback to REST API via background
         tagMap = await sendMessage('getTagsForCommits', { owner, repo, shas });
       }
     }

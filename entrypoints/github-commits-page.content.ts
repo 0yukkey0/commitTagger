@@ -1,7 +1,7 @@
 /**
  * MAIN world content script: runs in the page's JavaScript context.
  * This allows fetch() calls to include GitHub's session cookies,
- * enabling tag data retrieval without a Personal Access Token.
+ * enabling tag data retrieval using session cookies.
  */
 export default defineContentScript({
   matches: ['https://github.com/*/*/commits/*'],
