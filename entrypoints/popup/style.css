@@ -41,26 +41,6 @@ section {
   line-height: 1.4;
 }
 
-.input-group {
-  display: flex;
-  gap: 6px;
-}
-
-input[type='password'] {
-  flex: 1;
-  padding: 5px 8px;
-  border: 1px solid #d0d7de;
-  border-radius: 6px;
-  font-size: 12px;
-  font-family: monospace;
-  outline: none;
-}
-
-input[type='password']:focus {
-  border-color: #0969da;
-  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.12);
-}
-
 button {
   padding: 5px 12px;
   font-size: 12px;
@@ -98,12 +78,3 @@ button.secondary:hover {
   color: #1a7f37;
 }
 
-.rate-info {
-  font-size: 12px;
-  color: #656d76;
-  line-height: 1.5;
-}
-
-.rate-info strong {
-  color: #24292f;
-}
